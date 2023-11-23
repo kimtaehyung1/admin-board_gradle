@@ -169,8 +169,8 @@
                 </div>
                 <div class="card-body">
                     <form id="frm" method="post" action="upsetBasic.do">
-                        <input type="hidden" id="basicId" name="basicId"/>
-                        <input type="hidden" id="basicNo" name="basicNo"/>
+                        <input class="form-control" type="hidden" id="basicId" name="basicId"/>
+                        <input class="form-control" type="hidden" id="basicNo" name="basicNo"/>
                         <div class="row mb-3">
                             <div class="col-md-6" style="width: 30%;">
                                 <div class="form-floating mb-3 mb-md-0" style="width: 105%;">
@@ -324,17 +324,16 @@
         const currentDt = current.toJSON().slice(0, 10).replace(/-/g, ".")
 
         const data = {
-            "basicNo": 0,
-            "basicId": "BASC00",
-            "basicNm": name,
-            "basicCtnt": content,
-            "basicFilePath": filePath,
-            "personality": check,
-            "publicPrivate": selectOption,
-            "regNm": "홍길동",
-            "regDate": currentDt,
-            "modNm": "슈퍼맨",
-            "modDate": currentDt
+            basicId: "BASC00",
+            basicNm: name,
+            basicCtnt: content,
+            basicFilePath: filePath,
+            personality: check,
+            publicPrivate: selectOption,
+            regNm: "홍길동",
+            regDate: currentDt,
+            modNm: "슈퍼맨",
+            modDate: currentDt
         }
 
         console.log("data", data)

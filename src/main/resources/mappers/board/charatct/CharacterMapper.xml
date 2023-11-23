@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="character_info">
+    <select id="getBasicCharList">
+        select * from TB_BASIC_CHAR
+    </select>
+
+    <update id="upsetBasicCharacter" parameterType="com.board.dto.board.BasicCharDto">
+        MERGE INTO TB_BASIC_CHAR
+        USING DUAL
+            ON (basic_id = #{basicId})
+            WHEN MATCHED THEN
+        UPDATE SET
+            basic_nm = #{basicNm},
+            basic_ctnt = #{basicCtnt},
+            basic_file_path = #{basicFilePath},
+            mod_date = #{modDate},
+            mod_nm = #{modNm},
+            personality = #{personality},
+            public_private = #{publicPrivate}
+        WHEN NOT MATCHED THEN
+        INSERT(
+            basic_no,
+            basic_id,
+            basic_nm,
+            basic_ctnt,
+            basic_file_path,
+            reg_date,
+            reg_nm,
+            mod_date,
+            mod_nm,
+            personality,
+            public_private
+        )
+        VALUES(
+            (SELECT NVL(MAX(BASIC_NO), 0) + 1 FROM TB_BASIC_CHAR),
+            'BASC00'+(SELECT NVL(MAX(BASIC_NO), 0) + 1 FROM TB_BASIC_CHAR),
+            #{basicNm},
+            #{basicCtnt},
+            #{basicFilePath},
+            #{regDate},
+            #{regNm},
+            #{modDate},
+            #{modNm},
+            #{personality},
+            #{publicPrivate}
+        )
+    </update>
+</mapper>

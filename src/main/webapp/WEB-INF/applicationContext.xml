@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- DataSource 설정 -->
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          id="dataSource">
+        <property value="oracle.jdbc.driver.OracleDriver" name="driverClassName" />
+        <property value="jdbc:oracle:thin:@localhost:1521:XE" name="url" />
+        <property value="pig" name="username" />
+        <property value="1234" name="password" />
+    </bean>
+
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="SqlSessionFactory">
+        <property name="dataSource" ref="dataSource" />
+
+        <!-- XML Mapper 인식하게 설정 -->
+        <property value="classpath*:/mappers/**/*Mapper.xml" name="mapperLocations" />
+    </bean>
+    <bean  class="org.mybatis.spring.SqlSessionTemplate" id="sqlSession" destroy-method="clearCache">
+        <constructor-arg name="sqlSessionFactory" ref="SqlSessionFactory"/>
+    </bean>
+</beans>
