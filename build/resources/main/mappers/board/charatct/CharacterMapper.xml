@@ -9,7 +9,7 @@
         select * from TB_BASIC_CHAR
     </select>
 
-    <update id="upsetBasicCharacter" parameterType="com.board.dto.board.BasicCharDto">
+    <update id="upsetBasicCharacter" parameterType="map">
         MERGE INTO TB_BASIC_CHAR
         USING DUAL
             ON (basic_id = #{basicId})
@@ -18,7 +18,7 @@
             basic_nm = #{basicNm},
             basic_ctnt = #{basicCtnt},
             basic_file_path = #{basicFilePath},
-            mod_date = #{modDate},
+            mod_date = (SELECT TO_CHAR(SYSDATE, 'YYYY.MM.DD') FROM DUAL),
             mod_nm = #{modNm},
             personality = #{personality},
             public_private = #{publicPrivate}
@@ -31,21 +31,17 @@
             basic_file_path,
             reg_date,
             reg_nm,
-            mod_date,
-            mod_nm,
             personality,
             public_private
         )
         VALUES(
             (SELECT NVL(MAX(BASIC_NO), 0) + 1 FROM TB_BASIC_CHAR),
-            'BASC00'+(SELECT NVL(MAX(BASIC_NO), 0) + 1 FROM TB_BASIC_CHAR),
+            #{basicId} || (SELECT NVL(MAX(BASIC_NO), 0) + 1 FROM TB_BASIC_CHAR),
             #{basicNm},
             #{basicCtnt},
             #{basicFilePath},
-            #{regDate},
+            (SELECT TO_CHAR(SYSDATE, 'YYYY.MM.DD') FROM DUAL),
             #{regNm},
-            #{modDate},
-            #{modNm},
             #{personality},
             #{publicPrivate}
         )

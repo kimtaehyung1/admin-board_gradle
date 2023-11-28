@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java"
          pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
 <head>
     <title>기본 캐리터 게시판</title>
@@ -7,7 +8,7 @@
     <link href="/resources/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="/resources/js/jquery-3.3.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -161,16 +162,19 @@
 </div>
 
 <div class="modal" id="writeBasicChar">
-    <%--    <div class="container">--%>
     <div class="row justify-content-center">
         <div class="col-lg-7">
             <div class="card shadow-lg border-0 rounded-lg mt-5">
                 <div class="card-header"><h3 class="text-center font-weight-light my-4">캐릭터등록</h3>
                 </div>
                 <div class="card-body">
-                    <form id="frm" method="post" action="upsetBasic.do">
-                        <input class="form-control" type="hidden" id="basicId" name="basicId"/>
-                        <input class="form-control" type="hidden" id="basicNo" name="basicNo"/>
+                    <form id="frm" name="frm" onsubmit="return false" method="post">
+                        <input type="hidden" id="basicId" name="basicId"/>
+                        <input type="hidden" id="basicNo" name="basicNo"/>
+                        <input type="hidden" id="regNm" name="regNm"/>
+                        <input type="hidden" id="regDate" name="regDate"/>
+                        <input type="hidden" id="modNm" name="modNm"/>
+                        <input type="hidden" id="modDate" name="modDate"/>
                         <div class="row mb-3">
                             <div class="col-md-6" style="width: 30%;">
                                 <div class="form-floating mb-3 mb-md-0" style="width: 105%;">
@@ -197,7 +201,8 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input class="form-control" style="padding-left: 30px; padding-top: 17px;" id="inputFile"
+                            <input class="form-control" style="padding-left: 30px; padding-top: 17px;"
+                                   id="basicFilePath" name="basicFilePath"
                                    type="file" onclick="imgFile()"/>
                         </div>
                         <div class="row mb-3">
@@ -205,17 +210,20 @@
                                 <div class="form-floating mb-3 mb-md-0" style="padding-top: 7%;">
                                     <tr>
                                         <td>
-                                            <input type="checkbox" name="box" class="form-check-input" value="00"
+                                            <input type="checkbox" name="personality" class="form-check-input"
+                                                   value="00"
                                                    onclick="fnCheckBox(this)" checked>상관없음
 
                                         </td>
                                         <td>
-                                            <input type="checkbox" name="box" class="form-check-input" value="01"
+                                            <input type="checkbox" name="personality" class="form-check-input"
+                                                   value="01"
                                                    onclick="fnCheckBox(this)">공개
 
                                         </td>
                                         <td>
-                                            <input type="checkbox" name="box" class="form-check-input" value="02"
+                                            <input type="checkbox" name="personality" class="form-check-input"
+                                                   value="02"
                                                    onclick="fnCheckBox(this)">비공개
                                         </td>
                                     </tr>
@@ -223,7 +231,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
-                                    <select class="form-select" style="padding-top: 10px">
+                                    <select class="form-select" style="padding-top: 10px" name="publicPrivate">
                                         <option value="00">없음</option>
                                         <option value="01">열정캐릭터</option>
                                         <option value="02">감성캐릭터</option>
@@ -237,7 +245,7 @@
                         <div class="mt-4 mb-0">
                             <button class="btn btn-primary btn-write" type="button" onclick="onClose()">취소</button>
                             <button class="btn btn-primary" type="button">수정</button>
-                            <button class="btn btn-primary" type="submit" onclick="basicSubmit()">저장</button>
+                            <button class="btn btn-primary" type="button" onclick="basicSubmit()">저장</button>
                         </div>
 
                     </form>
@@ -248,7 +256,6 @@
             </div>
         </div>
     </div>
-    <%--    </div>--%>
 </div>
 
 
@@ -258,30 +265,32 @@
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
 <script src="/resources/js/datatables-simple-demo.js"></script>
-
-<script>
+<script type="text/javascript">
 
     let check = "00"
     let filePath = "00"
+    let fileInput = ""
 
     function basicWrite() {
         $('#writeBasicChar').show()
     }
 
     function fnCheckBox(element) {
-        document.getElementsByName("box").forEach((cb) => {
+        document.getElementsByName("personality").forEach((cb) => {
             cb.checked = false
         })
         element.checked = true
-        check = $("input[name='box']:checked").val();
+        check = $("input[name='personality']:checked").val();
     }
 
     function onClose() {
         $('#writeBasicChar').hide()
+        init()
     }
 
     function imgFile() {
-        const file = document.querySelector("#inputFile")
+
+        const file = document.querySelector("#basicFilePath")
         const preview = document.querySelector(".basic-img")
 
         // 이미지 url api 생성방법
@@ -291,22 +300,11 @@
             preview.src = imgSrc
             filePath = imgSrc
         })
-
-
-        // reader를 이용한 방법
-        // file.addEventListener('change', () => {
-        //     const reader = new FileReader()
-        //     reader.onload = ({target}) => {
-        //         preview.src = target.result
-        //         filePath = target.result
-        //     }
-        //     reader.readAsDataURL((file.files[0]))
-        // })
     }
 
     function imgCancel() {
         const preview = document.querySelector(".basic-img")
-        const file = document.querySelector("#inputFile")
+        const file = document.querySelector("#basicFilePath")
 
         preview.src = ""
         file.required = true
@@ -315,35 +313,41 @@
 
     function basicSubmit() {
 
-        let selectOption = document.querySelector(".form-select > option:checked").value
-        let name = $("#basicNm").val()
-        let content = $("#basicCtnt").val()
-        let id = $("#basicId").val()
+        let selectOption = $(".form-select > option:selected").val()
+        let basicNm = $("#basicNm").val()
+        let basicCtnt = $("#basicCtnt").val()
 
-        let current = new Date()
-        const currentDt = current.toJSON().slice(0, 10).replace(/-/g, ".")
+        let basicId = $("#basicId").val()
+        let regDate = $("#regDate").val()
+        let regNm = $("#regNm").val()
+        let modDate = $("#modDate").val()
+        let modNm = $("#modNm").val()
 
-        const data = {
-            basicId: "BASC00",
-            basicNm: name,
-            basicCtnt: content,
-            basicFilePath: filePath,
-            personality: check,
-            publicPrivate: selectOption,
-            regNm: "홍길동",
-            regDate: currentDt,
-            modNm: "슈퍼맨",
-            modDate: currentDt
-        }
+        fileInput = $("input[name=basicFilePath]").val()
+        let fileObj = fileInput.files[0];
 
-        console.log("data", data)
+        let formData = new FormData();
+
+        formData.append("basicId", basicId);
+        formData.append("basicNm", basicNm);
+        formData.append("basicCtnt", basicCtnt);
+        formData.append("basicFilePath", fileObj);
+        formData.append("personality", check);
+        formData.append("publicPrivate", selectOption);
+        formData.append("regDate", regDate);
+        formData.append("regNm", regNm);
+        formData.append("modDate", modDate);
+        formData.append("modNm", modNm);
+
         $.ajax({
             type: "post",
-            url: "/upsetBasic.do",
-            data: data,
-            // contentType : 'application/json',
-            success: function (data) {
-                console.log(data)
+            url: "upsetBasic.do",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                $('#writeBasicChar').hide()
+                init()
             },
             error: function (error) {
                 console.log("error", error)
@@ -351,6 +355,16 @@
         })
     }
 
+    function init() {
+        $("#basicNm").val("")
+        $("#basicCtnt").val("")
+        $("input[name=basicFilePath]").val("")
+        $("input[name='personality']:checked").val("00")
+        $(".form-select > option:selected").val("00")
+        $(".basic-img")[0].src = ""
+    }
+
 </script>
 </body>
 </html>
+

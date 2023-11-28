@@ -3,8 +3,10 @@ package com.board.dto.board;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
+@ToString
 public class BasicCharDto {
 
     private Integer basicNo;

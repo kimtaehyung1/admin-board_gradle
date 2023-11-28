@@ -5,6 +5,8 @@ import com.board.repository.board.BasicCharRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 
 @Service
 public class BasicCharService {
@@ -12,8 +14,7 @@ public class BasicCharService {
     @Autowired
     private BasicCharRepository charRepository;
 
-    public void upsertBasicCharInfo(BasicCharDto dto) {
-        System.out.println("serviece"+dto.toString());
-        charRepository.upsertBasicCharInfo(dto);
+    public void upsertBasicCharInfo(Map<String, Object> map) {
+        charRepository.upsertBasicCharInfo(map);
     }
 }
